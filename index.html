@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>温馨提示</title>
+    <style>
+        /* 弹窗样式：适配手机+电脑，带阴影更美观 */
+        .tip-box {
+            position: fixed;
+            padding: 20px;
+            border-radius: 12px;
+            font-family: "微软雅黑", sans-serif;
+            font-size: 18px;
+            text-align: center;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+            z-index: 9999; /* 置顶显示 */
+            transition: opacity 1s ease; /* 淡出动画 */
+            opacity: 1;
+            max-width: 250px;
+            word-wrap: break-word;
+        }
+        /* 移动端字体适配 */
+        @media (max-width: 480px) {
+            .tip-box {
+                font-size: 16px;
+                padding: 15px;
+                max-width: 200px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <script>
+        // 提示语和背景色（沿用原列表）
+        const tips = [
+            "多喝水哦", "保持微笑呀", "每天都要元气满满", "记得吃水果",
+            "保持好心情", "好好爱自己", "我想你了", "梦想成真", "期待下一次见面",
+            "金榜题名", "顺顺利利", "早点休息", "愿所有烦恼都消失", "多穿衣服",
+            "别熬夜", "今天过得开心嘛", "天冷了,多穿衣服"
+        ];
+        const bgColors = [
+            "lightpink", "skyblue", "lightgreen", "lavender",
+            "lightyellow", "plum", "coral", "bisque",
+            "aquamarine", "mistyrose", "honeydew",
+            "lavenderblush", "oldlace", "#00F5FF"
+        ];
+
+        // 存储所有弹窗，用于批量关闭
+        const allTips = [];
+
+        // 创建单个弹窗
+        function createTip() {
+            const tipBox = document.createElement("div");
+            tipBox.className = "tip-box";
+            
+            // 随机内容和样式
+            tipBox.textContent = tips[Math.floor(Math.random() * tips.length)];
+            tipBox.style.backgroundColor = bgColors[Math.floor(Math.random() * bgColors.length)];
+            
+            // 随机位置（避免超出屏幕）
+            const screenWidth = window.innerWidth;
+            const screenHeight = window.innerHeight;
+            const boxWidth = tipBox.offsetWidth || 250;
+            const boxHeight = tipBox.offsetHeight || 80;
+            const x = Math.floor(Math.random() * (screenWidth - boxWidth - 20)) + 10;
+            const y = Math.floor(Math.random() * (screenHeight - boxHeight - 20)) + 10;
+            tipBox.style.left = `${x}px`;
+            tipBox.style.top = `${y}px`;
+
+            // 点击弹窗可手动关闭
+            tipBox.addEventListener("click", () => closeTip(tipBox));
+
+            // 添加到页面和列表
+            document.body.appendChild(tipBox);
+            allTips.push(tipBox);
+
+            // 3秒后开始淡出，1秒后移除
+            setTimeout(() => {
+                tipBox.style.opacity = 0;
+                setTimeout(() => closeTip(tipBox), 1000);
+            }, 3000);
+        }
+
+        // 关闭单个弹窗
+        function closeTip(tipBox) {
+            const index = allTips.indexOf(tipBox);
+            if (index !== -1) allTips.splice(index, 1);
+            document.body.removeChild(tipBox);
+        }
+
+        // Esc键关闭所有弹窗
+        document.addEventListener("keydown", (e) => {
+            if (e.key === "Escape") {
+                allTips.forEach(tip => document.body.removeChild(tip));
+                allTips.length = 0;
+            }
+        });
+
+        // 批量创建30个弹窗（0.2秒一个，和原逻辑一致）
+        for (let i = 0; i < 30; i++) {
+            setTimeout(createTip, i * 200);
+        }
+    </script>
+</body>
+</html>
